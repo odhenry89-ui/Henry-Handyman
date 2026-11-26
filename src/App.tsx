@@ -61,17 +61,70 @@ function Header({ active }: { active: string }) {
   </header>;
 }
 
-function EnquiryForm({ service }: { service: string }) {
-  const [name, setName] = useState(''); const [phone, setPhone] = useState(''); const [location, setLocation] = useState(''); const [details, setDetails] = useState(''); const [timeframe, setTimeframe] = useState('Flexible');
-  function submit(e: FormEvent<HTMLFormElement>) { e.preventDefault(); const msg = `Hello Henry, I would like to enquire about ${service}.\n\nName: ${name}\nPhone: ${phone}\nLocation: ${location}\nTimeframe: ${timeframe}\nDetails: ${details}`; window.open(wa(msg), '_blank', 'noopener,noreferrer'); }
+function EnquiryForm({ service, kind = 'standard' }: { service: string; kind?: 'standard' | 'renovation' | 'small' }) {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [location, setLocation] = useState('');
+  const [details, setDetails] = useState('');
+  const [timeframe, setTimeframe] = useState('Flexible');
+  const [property, setProperty] = useState('Apartment');
+  const [size, setSize] = useState('');
+  const [jobType, setJobType] = useState('General repairs');
+
+  function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const extra = kind === 'renovation'
+      ? `Property type: ${property}\nApproximate size: ${size || 'Not specified'}\n`
+      : kind === 'small' ? `Service required: ${jobType}\n` : '';
+    const msg = `Hello Henry, I would like to enquire about ${service}.\n\nName: ${name}\nPhone: ${phone}\nLocation: ${location}\n${extra}Timeframe: ${timeframe}\nDetails: ${details}`;
+    window.open(wa(msg), '_blank', 'noopener,noreferrer');
+  }
+
   return <form className="enquiry-form" onSubmit={submit}>
-    <div className="form-row"><label>Your name<input required value={name} onChange={e => setName(e.target.value)} placeholder="Full name"/></label><label>Phone number<input required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+356 ..."/></label></div>
+    <div className="form-row">
+      <label>Your name<input required value={name} onChange={e => setName(e.target.value)} placeholder="Full name"/></label>
+      <label>Phone number<input required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+356 ..."/></label>
+    </div>
     <label>Property location<input required value={location} onChange={e => setLocation(e.target.value)} placeholder="Town or area in Malta"/></label>
+    {kind === 'renovation' && <>
+      <div className="form-row">
+        <label>Property type<select value={property} onChange={e => setProperty(e.target.value)}><option>Apartment</option><option>Maisonette</option><option>House / Villa</option><option>Commercial property</option><option>Other</option></select></label>
+        <label>Approximate size<input value={size} onChange={e => setSize(e.target.value)} placeholder="e.g. 120 m² / 3 bedrooms"/></label>
+      </div>
+    </>}
+    {kind === 'small' && <label>What do you need help with?<select value={jobType} onChange={e => setJobType(e.target.value)}>{['General repairs','Plumbing & bathroom','Painting & decorating','Roofing & waterproofing','AC cleaning & checks','Property maintenance','Other'].map(x => <option key={x}>{x}</option>)}</select></label>}
     <label>When would you like to start?<select value={timeframe} onChange={e => setTimeframe(e.target.value)}><option>Flexible</option><option>As soon as possible</option><option>Within 1–3 months</option><option>Within 3–6 months</option><option>Just planning / exploring</option></select></label>
-    <label>Tell us about the work<textarea required rows={4} value={details} onChange={e => setDetails(e.target.value)} placeholder="Describe the property and the work required..."/></label>
+    <label>Tell us about the work<textarea required rows={4} value={details} onChange={e => setDetails(e.target.value)} placeholder={kind === 'renovation' ? 'Describe the property, planned works and anything important...' : 'Describe the issue or work required...'}/></label>
     <p className="form-hint">WhatsApp will open with your enquiry ready to send. You can attach photos or plans directly in WhatsApp.</p>
     <button className="button button-dark form-submit" type="submit"><MessageCircle size={18}/> Send enquiry via WhatsApp <ArrowRight size={17}/></button>
   </form>;
+}
+
+function ContactEnquiryForms() {
+  return <section className="section-pad enquiry-section" id="enquiry">
+    <div className="container">
+      <div className="section-heading centered">
+        <span className="eyebrow"><i/> LET'S TALK</span>
+        <h2>What can we help<br/><em>you with?</em></h2>
+        <p>Choose the enquiry form that best matches your project. We work with homeowners, landlords and property businesses across Malta.</p>
+      </div>
+      <div className="forms-grid">
+        <div className="form-card renovation-form-card">
+          <div className="form-card-head"><span className="form-number">01 / LARGE PROJECTS</span><Building2 size={25}/><h3>Full Renovations</h3><p>For complete apartment renovations and larger property projects.</p></div>
+          <EnquiryForm service="a full renovation" kind="renovation"/>
+        </div>
+        <div className="form-card">
+          <div className="form-card-head"><span className="form-number">02 / INDIVIDUAL JOBS</span><Wrench size={25}/><h3>Small Jobs & Maintenance</h3><p>For repairs, installations and regular property maintenance.</p></div>
+          <EnquiryForm service="a handyman job" kind="small"/>
+        </div>
+      </div>
+      <div className="contact-details">
+        <a href={`tel:+${PHONE}`}><Phone size={18}/><span><small>Call us</small>+356 7933 7286</span></a>
+        <a href={`mailto:${EMAIL}`}><Mail size={18}/><span><small>Email</small>{EMAIL}</span></a>
+        <div><MapPin size={18}/><span><small>Service area</small>Across Malta</span></div>
+      </div>
+    </div>
+  </section>;
 }
 
 function HomeSections() {
@@ -89,7 +142,7 @@ function ServicePage({ page }: { page: typeof pages[number] }) {
   return <>
     <section className="hero inner-hero" style={{'--hero-image': `url(https://images.unsplash.com/${page.image}?auto=format&fit=crop&w=2200&q=88)`} as React.CSSProperties}><div className="hero-shade"/><div className="container hero-content"><motion.div initial={{opacity:0,y:22}} animate={{opacity:1,y:0}} transition={{duration:.65}}><span className="eyebrow eyebrow-light"><i/> HENRY HANDYMAN · MALTA</span><h1>{page.h1.split('\n').map((line,i)=><span key={i}>{line}{i===0?<br/>:null}</span>)}</h1><p className="hero-lead">{page.intro}</p><div className="hero-actions"><a className="button button-gold" href="#enquiry">Request a quote <ArrowRight size={18}/></a><a className="button button-glass" href="tel:+35679337286"><Phone size={16}/> Call Henry</a></div><div className="hero-trust"><span><CheckCircle2 size={17}/> Work across Malta</span><span><CheckCircle2 size={17}/> Clear communication</span><span><ShieldCheck size={17}/> Agreed scope of work</span></div></motion.div></div><div className="hero-note"><span/> PROPERTY CARE <b>·</b> MALTA</div></section>
     {isHome ? <HomeSections/> : <section className="section-pad detail-section"><div className="container detail-grid"><div><span className="eyebrow"><i/> {page.nav.toUpperCase()}</span><h2>{page.accent}</h2><p className="section-intro">{page.intro}</p><ul className="check-list">{page.bullets.map(b=><li key={b}><Check size={17}/>{b}</li>)}</ul><p className="small-note">The scope of each project is discussed and agreed before work begins. Specialist or regulated works are handled by appropriately qualified professionals where required.</p><a className="button button-dark" href="#enquiry">Discuss your project <ArrowRight size={17}/></a></div><div className="detail-photo" style={{backgroundImage:`url(https://images.unsplash.com/${page.image}?auto=format&fit=crop&w=1300&q=88)`}}><div className="photo-glass"><Sparkles size={19}/><span><b>Henry Handyman</b><small>Property care across Malta</small></span></div></div></div></section>}
-    <section className="section-pad enquiry-section" id="enquiry"><div className="container enquiry-layout"><div><span className="eyebrow"><i/> LET'S TALK</span><h2>Tell us what<br/><em>you need.</em></h2><p>Send us a few details and we’ll discuss the right next step for your property.</p><div className="contact-mini"><a href={`tel:+${PHONE}`}><Phone size={18}/> +356 7933 7286</a><a href={`mailto:${EMAIL}`}><Mail size={18}/> {EMAIL}</a><span><MapPin size={18}/> Across Malta</span></div></div><div className="form-card"><EnquiryForm service={page.service}/></div></div></section>
+    {page.path === '/contact' ? <ContactEnquiryForms/> : <section className="section-pad enquiry-section" id="enquiry"><div className="container enquiry-layout"><div><span className="eyebrow"><i/> LET'S TALK</span><h2>Tell us what<br/><em>you need.</em></h2><p>Send us a few details and we’ll discuss the right next step for your property.</p><div className="contact-mini"><a href={`tel:+${PHONE}`}><Phone size={18}/> +356 7933 7286</a><a href={`mailto:${EMAIL}`}><Mail size={18}/> {EMAIL}</a><span><MapPin size={18}/> Across Malta</span></div></div><div className="form-card"><EnquiryForm service={page.service}/></div></div></section>}
   </>;
 }
 
