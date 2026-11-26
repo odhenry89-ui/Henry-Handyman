@@ -32,7 +32,7 @@ import './index.css';
 const PHONE = '35679337286';
 const PHONE_DISPLAY = '+356 7933 7286';
 const EMAIL = 'email@henryhandyman-mt.com';
-const LOGO = '/henry-handyman-logo.png';
+const LOGO = '/henry-handyman-logo.png?v=2';
 const wa = (message: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
 
 const socials = [
@@ -90,7 +90,7 @@ const pages = [
     accent: 'Practical help for the jobs around your property.',
     intro:
       'From furniture assembly and fixture replacements to everyday repairs, Henry Handyman helps keep homes and rental properties in good working order.',
-    image: 'photo-1618221118493-9cfa1a1c00da',
+    image: 'photo-1780385187605-7324343d3f76',
     service: 'General handyman',
     defaultJobType: 'General repairs',
     bullets: [
@@ -126,7 +126,7 @@ const pages = [
     accent: 'Preparation, precision and clean finishes.',
     intro:
       'Refresh your apartment, rental property or commercial space with careful surface preparation, interior painting and decorative finishing.',
-    image: 'photo-1615529328331-f8917597711f',
+    image: 'photo-1599619585752-c3edb42a414c',
     service: 'Painting and decorating',
     defaultJobType: 'Painting & decorating',
     bullets: [
@@ -144,7 +144,7 @@ const pages = [
     accent: 'Find the issue. Repair it properly.',
     intro:
       'Water ingress can damage finishes and structure. We help investigate leaks and coordinate practical roof repair and waterproofing solutions appropriate to the property.',
-    image: 'photo-1600566753086-00f18fb6b3ea',
+    image: 'photo-1763665814965-b5c4b3547908',
     service: 'Roofing and waterproofing',
     defaultJobType: 'Roofing & waterproofing',
     bullets: [
@@ -162,7 +162,7 @@ const pages = [
     accent: 'Routine cleaning and basic condition checks.',
     intro:
       'Keep your air-conditioning units in better condition with routine filter and accessible component cleaning, plus basic visual checks. Specialist servicing is referred to qualified technicians where required.',
-    image: 'photo-1581092921461-eab62e97a780',
+    image: 'photo-1762341123870-d706f257a12e',
     service: 'AC cleaning and checks',
     defaultJobType: 'AC cleaning & checks',
     bullets: [
@@ -331,10 +331,71 @@ function getPageByPath(pathname: string) {
   return pages.find((p) => p.path === clean) || pages[0];
 }
 
+function FallbackLogoSvg() {
+  return (
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      {/* Head */}
+      <circle cx="58" cy="31" r="10.5" fill="#083b7c" stroke="#f5b51b" strokeWidth="4.5" />
+      {/* Raised tool (right side) */}
+      <path
+        d="M78 16 L104 37 C107 40 107 44 104 47 C101 50 97 50 94 47 L72 28 L72 19 Z"
+        fill="#083b7c"
+        stroke="#f5b51b"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* Left open wrench */}
+      <path
+        d="M21 66 C14 70 13 80 19 86 L34 99 L41 91 L28 79 C29 75 26 70 21 66 Z"
+        fill="#083b7c"
+        stroke="#f5b51b"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* Right open wrench */}
+      <path
+        d="M95 58 C103 62 105 72 99 79 L84 95 L77 87 L90 73 C89 68 91 62 95 58 Z"
+        fill="#083b7c"
+        stroke="#f5b51b"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* Hammer (left side) */}
+      <path
+        d="M14 48 L26 39 C31 35 38 35 43 38 L37 44 L44 68 L36 73 L28 49 L19 55 Z"
+        fill="#083b7c"
+        stroke="#f5b51b"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* Handyman body */}
+      <path
+        d="M41 56 C46 47 61 46 72 41 C80 37 85 29 88 23 C91 21 94 23 93 29 C90 41 82 51 70 57 L71 75 L81 102 L68 102 L58 80 L44 102 L31 102 L48 75 L47 61 L42 68 L36 60 Z"
+        fill="#083b7c"
+        stroke="#f5b51b"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* Inner arch triangle */}
+      <path d="M57 86 L67 102 L48 102 Z" fill="#083b7c" />
+    </svg>
+  );
+}
+
 function BrandMark({ lightBadge = false }: { lightBadge?: boolean }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
   return (
     <span className={lightBadge ? 'brand-mark footer-logo-badge' : 'brand-mark header-logo-blend'}>
-      <img src={LOGO} alt="Henry Handyman Malta logo" />
+      {imgFailed ? (
+        <FallbackLogoSvg />
+      ) : (
+        <img
+          src={LOGO}
+          alt="Henry Handyman Malta"
+          onError={() => setImgFailed(true)}
+        />
+      )}
     </span>
   );
 }
