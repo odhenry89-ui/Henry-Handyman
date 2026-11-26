@@ -23,6 +23,7 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
+  Star,
   Wind,
   Wrench,
   X,
@@ -33,14 +34,15 @@ const PHONE = '35679337286';
 const PHONE_DISPLAY = '+356 7933 7286';
 const EMAIL = 'email@henryhandyman-mt.com';
 const LOGO = '/henry-handyman-logo.png?v=2';
+const GOOGLE_REVIEWS_URL = 'https://maps.app.goo.gl/b5bbs6zT2NYNuX5ZA';
 const wa = (message: string) => `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
 
 const socials = [
   {
-    label: 'Google Reviews',
-    href: 'https://maps.app.goo.gl/xhzp6agcTLcrszwq5',
+    label: 'Google Reviews · 5.0 ★',
+    href: GOOGLE_REVIEWS_URL,
     icon: MapPin,
-    detail: 'Read customer feedback',
+    detail: '5-star rated · Read real client reviews',
   },
   {
     label: 'Instagram',
@@ -67,11 +69,11 @@ const pages = [
     path: '/',
     nav: 'Home',
     shortDesc: 'Full property care across Malta',
-    title: 'Henry Handyman Malta — Property Care & Renovations',
+    title: 'Henry Handyman Malta — 5★ Rated Property Care & Renovations',
     h1: 'Your property,\nin good hands.',
     accent: 'From everyday repairs to complete renovations.',
     intro:
-      'Reliable property maintenance, skilled repairs and coordinated apartment renovations across Malta. One clear point of contact, careful workmanship and communication you can count on.',
+      'Reliable property maintenance, skilled repairs and coordinated apartment renovations across Malta. One clear point of contact, careful workmanship and 5-star rated communication you can count on.',
     image: 'photo-1600210492486-724fe5c67fb0',
     service: 'Property care and renovations',
     defaultJobType: 'General repairs',
@@ -326,6 +328,16 @@ const faqs = [
   },
 ];
 
+function FiveStars({ size = 14 }: { size?: number }) {
+  return (
+    <span className="stars-row" aria-label="5 out of 5 stars">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <Star key={i} size={size} fill="currentColor" strokeWidth={1.5} />
+      ))}
+    </span>
+  );
+}
+
 function getPageByPath(pathname: string) {
   const clean = pathname.replace(/\/$/, '') || '/';
   return pages.find((p) => p.path === clean) || pages[0];
@@ -334,9 +346,7 @@ function getPageByPath(pathname: string) {
 function FallbackLogoSvg() {
   return (
     <svg viewBox="0 0 120 120" aria-hidden="true">
-      {/* Head */}
       <circle cx="58" cy="31" r="10.5" fill="#083b7c" stroke="#f5b51b" strokeWidth="4.5" />
-      {/* Raised tool (right side) */}
       <path
         d="M78 16 L104 37 C107 40 107 44 104 47 C101 50 97 50 94 47 L72 28 L72 19 Z"
         fill="#083b7c"
@@ -344,7 +354,6 @@ function FallbackLogoSvg() {
         strokeWidth="4"
         strokeLinejoin="round"
       />
-      {/* Left open wrench */}
       <path
         d="M21 66 C14 70 13 80 19 86 L34 99 L41 91 L28 79 C29 75 26 70 21 66 Z"
         fill="#083b7c"
@@ -352,7 +361,6 @@ function FallbackLogoSvg() {
         strokeWidth="4"
         strokeLinejoin="round"
       />
-      {/* Right open wrench */}
       <path
         d="M95 58 C103 62 105 72 99 79 L84 95 L77 87 L90 73 C89 68 91 62 95 58 Z"
         fill="#083b7c"
@@ -360,7 +368,6 @@ function FallbackLogoSvg() {
         strokeWidth="4"
         strokeLinejoin="round"
       />
-      {/* Hammer (left side) */}
       <path
         d="M14 48 L26 39 C31 35 38 35 43 38 L37 44 L44 68 L36 73 L28 49 L19 55 Z"
         fill="#083b7c"
@@ -368,7 +375,6 @@ function FallbackLogoSvg() {
         strokeWidth="4"
         strokeLinejoin="round"
       />
-      {/* Handyman body */}
       <path
         d="M41 56 C46 47 61 46 72 41 C80 37 85 29 88 23 C91 21 94 23 93 29 C90 41 82 51 70 57 L71 75 L81 102 L68 102 L58 80 L44 102 L31 102 L48 75 L47 61 L42 68 L36 60 Z"
         fill="#083b7c"
@@ -376,7 +382,6 @@ function FallbackLogoSvg() {
         strokeWidth="4"
         strokeLinejoin="round"
       />
-      {/* Inner arch triangle */}
       <path d="M57 86 L67 102 L48 102 Z" fill="#083b7c" />
     </svg>
   );
@@ -430,7 +435,17 @@ function Header({
     <header className="site-header">
       <div className="top-strip">
         <div className="container top-strip-inner">
-          <span>Property care &amp; renovations across Malta · Mon–Sat</span>
+          <div className="top-strip-left">
+            <span>Property care &amp; renovations across Malta</span>
+            <a
+              href={GOOGLE_REVIEWS_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="top-strip-rating"
+            >
+              <FiveStars size={11} /> 5.0 on Google
+            </a>
+          </div>
           <div className="top-strip-links">
             <a href={`mailto:${EMAIL}`} className="top-strip-email">
               <Mail size={13} /> {EMAIL}
@@ -546,6 +561,9 @@ function Header({
               {p.nav}
             </a>
           ))}
+          <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noreferrer">
+            ★ 5.0 Google Reviews
+          </a>
           <a
             className="button button-dark"
             href="#enquiry"
@@ -763,6 +781,16 @@ function TwoEnquiryForms({ page }: { page: (typeof pages)[number] }) {
             Choose the enquiry form that best matches your project. We work with homeowners,
             landlords and property businesses across Malta.
           </p>
+          <a
+            className="enquiry-rating-pill"
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <FiveStars size={13} />
+            <span>5.0 Rated on Google Maps · Read client reviews</span>
+            <ExternalLink size={13} />
+          </a>
         </div>
 
         <div className="forms-grid">
@@ -806,6 +834,13 @@ function TwoEnquiryForms({ page }: { page: (typeof pages)[number] }) {
             <span>
               <small>Email</small>
               {EMAIL}
+            </span>
+          </a>
+          <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noreferrer">
+            <Star size={18} fill="currentColor" />
+            <span>
+              <small>Google Maps Rating</small>
+              5.0 ★ Verified Reviews
             </span>
           </a>
           <div>
@@ -982,6 +1017,77 @@ function HomeSections({ onNavigate }: { onNavigate: (href: string) => void }) {
         </div>
       </section>
 
+      {/* Dedicated Google 5.0-Star Trust Showcase */}
+      <section className="reviews-showcase section-pad">
+        <div className="container">
+          <div className="reviews-card">
+            <div className="reviews-main">
+              <span className="eyebrow">
+                <i /> VERIFIED REPUTATION ON GOOGLE MAPS
+              </span>
+              <div className="reviews-score-row">
+                <strong className="reviews-score-num">5.0</strong>
+                <div>
+                  <FiveStars size={22} />
+                  <span>Perfect 5-Star Rating on Google Maps</span>
+                </div>
+              </div>
+              <h2>
+                Trusted across Malta.
+                <br />
+                <em>Rated 5.0 ★ by clients.</em>
+              </h2>
+              <p>
+                Our reputation is built one job at a time — through punctual arrivals, tidy work
+                and clear communication. Check our Google Maps profile to read dozens of real
+                reviews from homeowners, landlords and Airbnb hosts across Malta.
+              </p>
+              <div className="reviews-actions">
+                <a
+                  className="button button-dark"
+                  href={GOOGLE_REVIEWS_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read our Google reviews <ExternalLink size={16} />
+                </a>
+                <a
+                  className="button button-outline"
+                  href="#enquiry"
+                  onClick={(e) => handleNav(e, '#enquiry')}
+                >
+                  Request a quote <ArrowRight size={16} />
+                </a>
+              </div>
+            </div>
+
+            <div className="reviews-highlights">
+              <div className="review-highlight-item">
+                <Clock3 size={20} />
+                <div>
+                  <b>Punctual &amp; dependable</b>
+                  <p>Showing up when agreed and keeping you updated at every stage of the job.</p>
+                </div>
+              </div>
+              <div className="review-highlight-item">
+                <Sparkles size={20} />
+                <div>
+                  <b>Tidy, careful workmanship</b>
+                  <p>Attention to finishing details and leaving your property clean afterwards.</p>
+                </div>
+              </div>
+              <div className="review-highlight-item">
+                <ShieldCheck size={20} />
+                <div>
+                  <b>Honest, transparent communication</b>
+                  <p>Clear scope and straightforward coordination—whether you are in Malta or abroad.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="process-section section-pad">
         <div className="container">
           <div className="section-heading centered">
@@ -1083,8 +1189,8 @@ function HomeSections({ onNavigate }: { onNavigate: (href: string) => void }) {
               <em>Read the reviews.</em>
             </h2>
             <p>
-              Explore our business profiles for project updates, short videos, business details and
-              customer feedback across Malta.
+              Explore our 5-star Google Maps profile, project updates and short videos from completed
+              jobs across Malta.
             </p>
           </div>
           <div className="profile-links">
@@ -1147,6 +1253,17 @@ function ServicePage({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
           >
+            <a
+              className="hero-rating-pill"
+              href={GOOGLE_REVIEWS_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FiveStars size={13} />
+              <span>5.0 on Google Maps · Read client reviews</span>
+              <ExternalLink size={12} />
+            </a>
+
             <span className="eyebrow eyebrow-light">
               <i /> HENRY HANDYMAN · MALTA
             </span>
@@ -1172,11 +1289,16 @@ function ServicePage({
               </a>
             </div>
             <div className="hero-trust">
+              <a
+                href={GOOGLE_REVIEWS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="hero-trust-link"
+              >
+                <Star size={17} fill="currentColor" /> 5.0 ★ Google Rated
+              </a>
               <span>
                 <CheckCircle2 size={17} /> Work across Malta
-              </span>
-              <span>
-                <CheckCircle2 size={17} /> Clear communication
               </span>
               <span>
                 <ShieldCheck size={17} /> Agreed scope of work
@@ -1216,13 +1338,18 @@ function ServicePage({
                 </div>
                 <ArrowRight size={16} />
               </a>
-              <a className="channel-card" href={`mailto:${EMAIL}`}>
-                <Mail size={22} />
+              <a
+                className="channel-card"
+                href={GOOGLE_REVIEWS_URL}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Star size={22} fill="currentColor" />
                 <div>
-                  <b>Email</b>
-                  <span>{EMAIL}</span>
+                  <b>5.0 ★ Google Reviews</b>
+                  <span>See verified feedback on Google Maps</span>
                 </div>
-                <ArrowRight size={16} />
+                <ExternalLink size={16} />
               </a>
             </div>
           </div>
@@ -1256,8 +1383,13 @@ function ServicePage({
                 >
                   Discuss your project <ArrowRight size={17} />
                 </a>
-                <a className="button button-outline" href="/" onClick={(e) => handleLink(e, '/')}>
-                  View all services
+                <a
+                  className="button button-outline"
+                  href={GOOGLE_REVIEWS_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  5.0 ★ Google Reviews <ExternalLink size={15} />
                 </a>
               </div>
             </div>
@@ -1268,13 +1400,18 @@ function ServicePage({
                 backgroundImage: `url(https://images.unsplash.com/${page.image}?auto=format&fit=crop&w=1300&q=85)`,
               }}
             >
-              <div className="photo-glass">
-                <Sparkles size={19} />
+              <a
+                href={GOOGLE_REVIEWS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="photo-glass"
+              >
+                <Star size={19} fill="currentColor" />
                 <span>
-                  <b>Henry Handyman</b>
-                  <small>Property care across Malta</small>
+                  <b>5.0 ★ on Google Maps</b>
+                  <small>Rated by clients across Malta</small>
                 </span>
-              </div>
+              </a>
             </div>
           </div>
         </section>
@@ -1307,6 +1444,16 @@ function Footer({ onNavigate }: { onNavigate: (href: string) => void }) {
             Property care, maintenance and full apartment renovations across Malta. One clear point
             of contact from enquiry to completion.
           </p>
+          <a
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="footer-rating-badge"
+          >
+            <FiveStars size={13} />
+            <span>5.0 on Google Maps</span>
+            <ExternalLink size={12} />
+          </a>
         </div>
 
         <div className="footer-nav">
@@ -1325,8 +1472,8 @@ function Footer({ onNavigate }: { onNavigate: (href: string) => void }) {
           </a>
           <a href={`tel:+${PHONE}`}>{PHONE_DISPLAY}</a>
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-          <a href={socials[0].href} target="_blank" rel="noreferrer">
-            Google Reviews <ExternalLink size={12} />
+          <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noreferrer">
+            Google Reviews (5.0 ★) <ExternalLink size={12} />
           </a>
           <a href={socials[1].href} target="_blank" rel="noreferrer">
             Instagram <ExternalLink size={12} />
