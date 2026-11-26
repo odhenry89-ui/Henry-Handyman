@@ -1,561 +1,331 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+import { useState, type FormEvent } from "react";
+import { motion } from "motion/react";
+import {
+  ArrowRight, Check, CheckCircle2, Facebook, Instagram, Mail, MapPin,
+  Menu, MessageCircle, Phone, Sparkles, Wrench, X, Zap, Droplets,
+  Paintbrush, Home, Building2, ExternalLink, Music2
+} from "lucide-react";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Wrench, 
-  Zap, 
-  Droplets, 
-  Paintbrush, 
-  CheckCircle2, 
-  MessageCircle, 
-  Menu, 
-  X, 
-  ArrowRight,
-  Star,
-  Hammer,
-  Home
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import logo from './logo.png';
-import background from './background.jpg';
-import renovations from './Full Apartment Renovations.jpg';
+const PHONE = "35679337286";
+const EMAIL = "email@henryhandyman-mt.com";
 
-const WHATSAPP_NUMBER = "+35679337286";
-const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER.replace('+', '')}`;
-
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Prevent scroll when mobile menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-  }, [isMobileMenuOpen]);
-
-  const navLinks = [
-    { name: 'Services', href: '#services' },
-    { name: 'Renovations', href: '#renovations' },
-    { name: 'Reviews', href: '#reviews' },
-    { name: 'Contact', href: '#contact' },
-  ];
-
-  const handleNavLinkClick = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  return (
-    <>
-      <nav className={`fixed top-0 w-full z-[100] transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div className="flex items-center gap-2 relative z-[110]">
-            <img src={logo} alt="Henry Handyman Logo" className="h-8 sm:h-10 w-auto" referrerPolicy="no-referrer" />
-            <span className={`text-lg sm:text-xl font-bold tracking-tight ${isScrolled || isMobileMenuOpen ? 'text-brand-slate' : 'text-white'}`}>
-              HENRY <span className="text-brand-yellow">HANDYMAN</span>
-            </span>
-          </div>
-
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href} 
-                className={`font-medium transition-colors hover:text-brand-yellow ${isScrolled ? 'text-brand-slate' : 'text-white'}`}
-              >
-                {link.name}
-              </a>
-            ))}
-            <a 
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-brand-yellow text-brand-slate px-5 py-2 rounded-full font-semibold hover:bg-yellow-500 transition-all flex items-center gap-2"
-            >
-              <MessageCircle size={18} />
-              WhatsApp
-            </a>
-          </div>
-
-          {/* Mobile Toggle */}
-          <button 
-            className="md:hidden p-3 -mr-2 relative z-[110]"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="text-brand-slate" />
-            ) : (
-              <Menu className={isScrolled ? 'text-brand-slate' : 'text-white'} />
-            )}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-[90] md:hidden flex flex-col pt-24 px-6"
-          >
-            <div className="flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <a 
-                  key={link.name} 
-                  href={link.href} 
-                  className="text-3xl font-bold text-brand-slate hover:text-brand-yellow transition-colors py-2 border-b border-slate-100"
-                  onClick={handleNavLinkClick}
-                >
-                  {link.name}
-                </a>
-              ))}
-              <a 
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 w-full bg-brand-yellow text-brand-slate px-6 py-5 rounded-2xl font-bold text-xl flex justify-center items-center gap-3 shadow-xl shadow-yellow-600/20"
-                onClick={handleNavLinkClick}
-              >
-                <MessageCircle size={28} />
-                Message on WhatsApp
-              </a>
-            </div>
-            
-            <div className="mt-auto pb-12 text-center">
-              <p className="text-slate-400 font-medium mb-4">Malta's Trusted Handyman</p>
-              <div className="flex justify-center gap-4 text-brand-slate">
-                <Phone size={20} />
-                <span className="font-bold">+356 79337286</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
+const LINKS = {
+  google: "https://maps.app.goo.gl/xhzp6agcTLcrszwq5",
+  facebook: "https://www.facebook.com/share/1CcAZ3gjtb/?mibextid=wwXIfr",
+  instagram: "https://www.instagram.com/henryhandymanmalta?bqrl=bGk3bWphdGt5dDFx",
+  tiktok: "https://vm.tiktok.com/ZN9PVarg23YBK-ZtJRw/",
 };
 
-const Hero = () => {
-  const heroImage = background;
+const waLink = (message: string) =>
+  `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
+
+const services = [
+  {
+    icon: Wrench,
+    title: "General Handyman",
+    text: "Repairs, installations, furniture assembly and everyday property fixes.",
+    items: ["General repairs", "Furniture assembly", "Doors, handles & fixtures"],
+  },
+  {
+    icon: Droplets,
+    title: "Plumbing & Bathrooms",
+    text: "Practical plumbing repairs, bathroom upgrades and installation work.",
+    items: ["Tap & fixture replacement", "Bathroom repairs", "Re-grouting & sealing"],
+  },
+  {
+    icon: Paintbrush,
+    title: "Painting & Decorating",
+    text: "Careful preparation and clean finishes for interiors and exteriors.",
+    items: ["Interior painting", "Surface preparation", "Decorative finishing"],
+  },
+  {
+    icon: Home,
+    title: "Roofing & Waterproofing",
+    text: "Roof repairs and waterproofing solutions to help protect your property.",
+    items: ["Roof inspections & repairs", "Waterproofing", "Leak investigation"],
+  },
+  {
+    icon: Zap,
+    title: "AC Cleaning & Checks",
+    text: "Routine air-conditioning cleaning and basic condition checks.",
+    items: ["AC cleaning", "Filter cleaning", "Basic diagnostics"],
+  },
+  {
+    icon: Building2,
+    title: "Property Maintenance",
+    text: "Reliable ongoing maintenance for residential and commercial properties.",
+    items: ["Scheduled maintenance", "Property inspections", "Repair coordination"],
+  },
+];
+
+const socialLinks = [
+  { label: "Google Maps", detail: "Customer reviews & business photos", href: LINKS.google, icon: MapPin },
+  { label: "Instagram", detail: "Projects, updates & behind the scenes", href: LINKS.instagram, icon: Instagram },
+  { label: "Facebook", detail: "Business updates & community", href: LINKS.facebook, icon: Facebook },
+  { label: "TikTok", detail: "Short videos from jobs and projects", href: LINKS.tiktok, icon: Music2 },
+];
+
+function Header() {
+  const [open, setOpen] = useState(false);
+  const nav = [
+    ["Renovations", "#renovations"],
+    ["Services", "#services"],
+    ["How it works", "#process"],
+    ["Our profiles", "#profiles"],
+    ["Contact", "#contact"],
+  ];
 
   return (
-    <section className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={heroImage} 
-          alt="Handyman tools and workspace" 
-          className="w-full h-full object-cover"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-slate/95 via-brand-slate/80 to-transparent"></div>
+    <header className="site-header">
+      <div className="top-strip">
+        <div className="container top-strip-inner">
+          <span>Property care & renovations across Malta</span>
+          <a href={`tel:+${PHONE}`}><Phone size={13} /> +356 7933 7286</a>
+        </div>
       </div>
+      <div className="nav-wrap">
+        <a className="brand" href="#top" aria-label="Henry Handyman home">
+          <span className="brand-mark">H<span>H</span></span>
+          <span className="brand-name">HENRY <b>HANDYMAN</b><small>PROPERTY CARE & RENOVATIONS</small></span>
+        </a>
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {nav.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+        </nav>
+        <a className="button button-dark nav-cta" href="#renovation-enquiry">Discuss a renovation <ArrowRight size={16} /></a>
+        <button className="mobile-menu-button" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+          {open ? <X /> : <Menu />}
+        </button>
+      </div>
+      {open && (
+        <nav className="mobile-nav">
+          {nav.map(([label, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>)}
+          <a className="button button-dark" href="#renovation-enquiry" onClick={() => setOpen(false)}>Discuss a renovation <ArrowRight size={16} /></a>
+        </nav>
+      )}
+    </header>
+  );
+}
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-2xl"
-        >
-          <span className="inline-block bg-brand-yellow/20 text-brand-yellow px-4 py-1 rounded-full text-sm font-bold tracking-wider uppercase mb-6 backdrop-blur-sm">
-            Premium Quality at Your Doorstep
-          </span>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6">
-            Your Trusted Home Specialist in <span className="text-brand-yellow">Malta.</span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-300 mb-10 leading-relaxed">
-            From minor repairs to full apartment renovations. Henry Handyman brings expertise to every corner of your home. Professional. Reliable. Local.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4">
-            <a 
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-brand-yellow text-brand-slate px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-500 transition-all flex items-center justify-center gap-3 shadow-lg shadow-yellow-600/30"
-            >
-              <MessageCircle size={24} />
-              WhatsApp Me
-            </a>
-            <a 
-              href="#services"
-              className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center gap-2"
-            >
-              View Services
-              <ArrowRight size={20} />
-            </a>
+function Hero() {
+  return (
+    <section className="hero" id="top">
+      <div className="hero-image" role="img" aria-label="Contemporary renovated apartment interior" />
+      <div className="hero-shade" />
+      <div className="container hero-content">
+        <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          <div className="eyebrow eyebrow-light"><span /> HENRY HANDYMAN · MALTA</div>
+          <h1>Full apartment renovations.<br /><em>Done with care.</em></h1>
+          <p className="hero-lead">From the first stages of renovation to the final details, we help bring your property together with one reliable point of contact.</p>
+          <div className="hero-actions">
+            <a className="button button-gold" href="#renovation-enquiry">Request a renovation quote <ArrowRight size={18} /></a>
+            <a className="button button-glass" href="#services">Explore our services</a>
+          </div>
+          <div className="hero-trust">
+            <span><CheckCircle2 size={17} /> One point of contact</span>
+            <span><CheckCircle2 size={17} /> Work across Malta</span>
+            <span><CheckCircle2 size={17} /> Clear communication</span>
           </div>
         </motion.div>
       </div>
+      <div className="hero-note"><span className="note-dot" /> Renovation & property care <b>·</b> Malta</div>
+    </section>
+  );
+}
 
-      {/* Floating Stats or Badges */}
-      <div className="absolute bottom-10 left-0 w-full hidden lg:block">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-12 text-white/60">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-brand-yellow" />
-              <span className="font-medium">Guaranteed Quality</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-brand-yellow" />
-              <span className="font-medium">Turnkey Solutions</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="text-brand-yellow" />
-              <span className="font-medium">5-Star Rated</span>
-            </div>
+function RenovationFeature() {
+  const stages = ["Planning & coordination", "Electrical & plumbing", "Plastering & preparation", "Tiling & flooring", "Painting & finishing", "Fixtures & final details"];
+  return (
+    <section className="renovation-section section-pad" id="renovations">
+      <div className="container renovation-grid">
+        <motion.div className="renovation-visual" initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <div className="renovation-photo" />
+          <div className="visual-caption"><span className="caption-icon"><Sparkles size={19} /></span><span><b>From start to finish</b><small>A coordinated renovation journey</small></span></div>
+          <div className="visual-index">01 <span>/ FEATURED SERVICE</span></div>
+        </motion.div>
+        <motion.div className="renovation-copy" initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <div className="eyebrow"><span /> OUR MAIN SERVICE</div>
+          <h2>Full Apartment<br /><em>Renovations</em></h2>
+          <p className="section-intro">A complete renovation needs good planning, dependable trades and attention to every detail. Henry Handyman coordinates renovation works to help turn your ideas into a finished, functional home.</p>
+          <div className="stage-list">
+            {stages.map((stage) => <div className="stage-item" key={stage}><Check size={16} /> {stage}</div>)}
           </div>
-        </div>
+          <p className="small-note">The scope of each project is discussed and agreed before work begins. Specialist or regulated works are handled by appropriately qualified professionals where required.</p>
+          <a className="button button-dark" href="#renovation-enquiry">Tell us about your project <ArrowRight size={17} /></a>
+        </motion.div>
       </div>
     </section>
   );
-};
+}
 
-const FeaturedService = () => {
-  const renovationImage = renovations;
-
+function Services() {
   return (
-    <section id="renovations" className="py-24 bg-white overflow-hidden scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                src={renovationImage} 
-                alt="Modern apartment renovation" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <div className="absolute -bottom-8 -right-8 bg-brand-yellow text-brand-slate p-8 rounded-3xl shadow-xl hidden sm:block">
-              <p className="text-4xl font-bold mb-1">100%</p>
-              <p className="text-sm font-medium opacity-80">Stress-Free Experience</p>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="text-center lg:text-left"
-          >
-            <h2 className="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-4">The Star Service</h2>
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-slate mb-6 leading-tight">
-              Full Apartment Renovations – Turnkey Solutions.
-            </h3>
-            <p className="text-base sm:text-lg text-gray-600 mb-8 leading-relaxed">
-              We handle everything from A to Z. Whether you've just bought a shell apartment or want to breathe new life into your current home, Henry Handyman ensures a stress-free experience. We manage the plumbing, electrical, tiling, and finishing touches so you don't have to.
-            </p>
-            
-            <ul className="space-y-4 mb-10">
-              {[
-                "Project management from start to finish",
-                "Expert plumbing & electrical installations",
-                "High-quality tiling & flooring",
-                "Custom interior decorating & painting"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-brand-slate font-medium">
-                  <div className="bg-yellow-50 p-1 rounded-full">
-                    <CheckCircle2 className="text-brand-yellow w-5 h-5" />
-                  </div>
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <a 
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-brand-slate text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-900 transition-all"
-            >
-              Get a Free Quote
-              <ArrowRight size={20} />
-            </a>
-          </motion.div>
+    <section className="services-section section-pad" id="services">
+      <div className="container">
+        <div className="section-heading">
+          <div className="eyebrow"><span /> PROPERTY CARE</div>
+          <h2>More ways to care<br /><em>for your property.</em></h2>
+          <p>Alongside full renovations, we provide practical repair and maintenance services for homes, apartments and businesses across Malta.</p>
         </div>
-      </div>
-    </section>
-  );
-};
-
-const ServicesGrid = () => {
-  const categories = [
-    {
-      title: "General & Furniture",
-      icon: <Wrench className="w-8 h-8" />,
-      services: ["Furniture assembly", "Home maintenance", "General repairs"]
-    },
-    {
-      title: "Electrical & AC",
-      icon: <Zap className="w-8 h-8" />,
-      services: ["Small electrical tasks", "Fan installation/repair", "AC cleaning & filter replacement", "Diagnostics"]
-    },
-    {
-      title: "Plumbing & Roofing",
-      icon: <Droplets className="w-8 h-8" />,
-      services: ["Plumbing fixture installation", "Water fixture repair", "Roof repair", "Waterproofing"]
-    },
-    {
-      title: "Painting & Decorating",
-      icon: <Paintbrush className="w-8 h-8" />,
-      services: ["Interior & Exterior painting", "Interior decorating"]
-    }
-  ];
-
-  return (
-    <section id="services" className="py-24 bg-slate-50 scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-4">Our Expertise</h2>
-          <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-slate mb-6">Comprehensive Home Services</h3>
-          <p className="text-base sm:text-lg text-gray-600">
-            No job is too small or too big. We bring professional tools and years of experience to every task.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {categories.map((cat, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all border border-slate-100 group overflow-hidden"
-            >
-              <div className="p-8">
-                <div className="bg-yellow-50 text-brand-yellow w-12 h-12 rounded-xl flex items-center justify-center mb-6 group-hover:bg-brand-yellow group-hover:text-brand-slate transition-colors">
-                  {React.cloneElement(cat.icon as React.ReactElement, { className: "w-6 h-6" })}
-                </div>
-                <h4 className="text-xl font-bold text-brand-slate mb-4">{cat.title}</h4>
-                <ul className="space-y-3">
-                  {cat.services.map((service, sIdx) => (
-                    <li key={sIdx} className="text-gray-500 flex items-start gap-2 text-sm">
-                      <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-yellow shrink-0" />
-                      {service}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
+        <div className="services-grid">
+          {services.map(({ icon: Icon, title, text, items }, index) => (
+            <motion.article className="service-card" key={title} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }}>
+              <div className="service-icon"><Icon size={23} /></div>
+              <h3>{title}</h3>
+              <p>{text}</p>
+              <ul>{items.map(item => <li key={item}>{item}</li>)}</ul>
+              <a href="#small-job-enquiry">Enquire about this service <ArrowRight size={15} /></a>
+            </motion.article>
           ))}
         </div>
       </div>
     </section>
   );
-};
+}
 
-const Testimonials = () => {
-  const reviews = [
-    {
-      name: "Mark Zammit",
-      text: "Henry is incredibly punctual and professional. He fixed our AC and did some general repairs. Clean work and very fair pricing. Highly recommended in Malta!",
-      rating: 5
-    },
-    {
-      name: "Sarah Borg",
-      text: "We used Henry for our apartment renovation in Sliema. He handled everything from plumbing to painting. Stress-free and high quality. A true specialist.",
-      rating: 5
-    },
-    {
-      name: "David Attard",
-      text: "Excellent furniture assembly and electrical work. Very efficient and polite. It's hard to find such reliable handymen these days. 5 stars!",
-      rating: 5
-    }
+function Process() {
+  const steps = [
+    ["01", "Tell us what you need", "Share a short description, your location and any useful details about the property."],
+    ["02", "Discuss the scope", "We review the request, clarify the work involved and discuss the next steps."],
+    ["03", "Agree and get started", "Once the scope and quotation are agreed, we arrange the work and keep communication clear."],
   ];
-
   return (
-    <section id="reviews" className="py-24 bg-brand-slate text-white overflow-hidden scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-4">Social Proof</h2>
-          <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6">What Our Clients in Malta Say</h3>
-          <div className="flex justify-center items-center gap-2 text-brand-yellow">
-            {[...Array(5)].map((_, i) => <Star key={i} fill="currentColor" size={24} />)}
-            <span className="ml-2 text-white font-bold text-xl">5.0 on Google</span>
-          </div>
+    <section className="process-section section-pad" id="process">
+      <div className="container">
+        <div className="section-heading centered">
+          <div className="eyebrow"><span /> A STRAIGHTFORWARD PROCESS</div>
+          <h2>Good work starts with<br /><em>a clear plan.</em></h2>
         </div>
+        <div className="process-grid">
+          {steps.map(([num, title, text]) => <div className="process-card" key={num}><span>{num}</span><h3>{title}</h3><p>{text}</p></div>)}
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {reviews.map((review, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="bg-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10"
-            >
-              <div className="flex gap-1 text-brand-yellow mb-4">
-                {[...Array(review.rating)].map((_, i) => <Star key={i} fill="currentColor" size={16} />)}
-              </div>
-              <p className="text-lg text-gray-300 italic mb-6">"{review.text}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-brand-yellow text-brand-slate rounded-full flex items-center justify-center font-bold">
-                  {review.name[0]}
-                </div>
-                <span className="font-bold">{review.name}</span>
-              </div>
-            </motion.div>
+function Profiles() {
+  return (
+    <section className="profiles-section section-pad" id="profiles">
+      <div className="container profiles-layout">
+        <div>
+          <div className="eyebrow eyebrow-light"><span /> FOLLOW OUR WORK</div>
+          <h2>See more of<br /><em>what we do.</em></h2>
+          <p>Explore our business profiles for photos, updates, videos and customer feedback. We keep project galleries on our social platforms rather than duplicating photos on this website.</p>
+        </div>
+        <div className="profile-links">
+          {socialLinks.map(({ label, detail, href, icon: Icon }) => (
+            <a className="profile-link" href={href} target="_blank" rel="noreferrer" key={label}>
+              <span className="profile-icon"><Icon size={22} /></span>
+              <span className="profile-text"><b>{label}</b><small>{detail}</small></span>
+              <ExternalLink size={17} />
+            </a>
           ))}
         </div>
-        
-        <div className="mt-16 text-center">
-          <a 
-            href="https://maps.app.goo.gl/ZZdZQCA1yFrc74w9A" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-brand-yellow font-bold hover:underline flex items-center justify-center gap-2"
-          >
-            View all reviews on Google Maps
-            <ArrowRight size={18} />
-          </a>
+      </div>
+    </section>
+  );
+}
+
+function EnquiryForm({ type }: { type: "renovation" | "small" }) {
+  const isRenovation = type === "renovation";
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [details, setDetails] = useState("");
+  const [property, setProperty] = useState("Apartment");
+  const [size, setSize] = useState("");
+  const [timeframe, setTimeframe] = useState("Flexible");
+  const [service, setService] = useState("General repairs");
+
+  function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const message = isRenovation
+      ? `Hello Henry, I would like to enquire about a full renovation.\n\nName: ${name}\nPhone: ${phone}\nLocation: ${location}\nProperty type: ${property}\nApprox. size: ${size || "Not specified"}\nTimeframe: ${timeframe}\nProject details: ${details}`
+      : `Hello Henry, I would like to enquire about a handyman job.\n\nName: ${name}\nPhone: ${phone}\nLocation: ${location}\nService: ${service}\nJob details: ${details}`;
+    window.open(waLink(message), "_blank", "noopener,noreferrer");
+  }
+
+  return (
+    <form className="enquiry-form" onSubmit={submit}>
+      <div className="form-row">
+        <label>Your name<input required value={name} onChange={e => setName(e.target.value)} placeholder="Full name" /></label>
+        <label>Phone number<input required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+356 ..." /></label>
+      </div>
+      <label>Property location<input required value={location} onChange={e => setLocation(e.target.value)} placeholder="Town or area in Malta" /></label>
+      {isRenovation ? (
+        <>
+          <div className="form-row">
+            <label>Property type<select value={property} onChange={e => setProperty(e.target.value)}><option>Apartment</option><option>Maisonette</option><option>House / Villa</option><option>Commercial property</option><option>Other</option></select></label>
+            <label>Approximate size<input value={size} onChange={e => setSize(e.target.value)} placeholder="e.g. 120 m² / 3 bedrooms" /></label>
+          </div>
+          <label>When would you like to start?<select value={timeframe} onChange={e => setTimeframe(e.target.value)}><option>Flexible</option><option>As soon as possible</option><option>Within 1–3 months</option><option>Within 3–6 months</option><option>Just planning / exploring</option></select></label>
+        </>
+      ) : (
+        <label>What do you need help with?<select value={service} onChange={e => setService(e.target.value)}>{["General repairs", "Plumbing & bathroom", "Painting & decorating", "Roofing & waterproofing", "AC cleaning & checks", "Property maintenance", "Other"].map(x => <option key={x}>{x}</option>)}</select></label>
+      )}
+      <label>Tell us about the work<textarea required rows={4} value={details} onChange={e => setDetails(e.target.value)} placeholder={isRenovation ? "Describe the property, planned works and anything important..." : "Describe the issue or work required..."} /></label>
+      <p className="form-hint">After submitting, WhatsApp will open with your enquiry ready to send. You can attach photos or plans directly in WhatsApp.</p>
+      <button className="button button-dark form-submit" type="submit"><MessageCircle size={18} /> Send enquiry via WhatsApp <ArrowRight size={17} /></button>
+    </form>
+  );
+}
+
+function Contact() {
+  return (
+    <section className="contact-section section-pad" id="contact">
+      <div className="container">
+        <div className="section-heading centered">
+          <div className="eyebrow"><span /> LET'S TALK</div>
+          <h2>What can we help<br /><em>you with?</em></h2>
+          <p>Choose the enquiry form that best matches your project. We work with homeowners, landlords and property businesses across Malta.</p>
+        </div>
+        <div className="forms-grid">
+          <div className="form-card renovation-form-card" id="renovation-enquiry">
+            <div className="form-card-head"><span className="form-number">01 / LARGE PROJECTS</span><Building2 size={25} /><h3>Full Renovations</h3><p>For complete apartment renovations and larger property projects.</p></div>
+            <EnquiryForm type="renovation" />
+          </div>
+          <div className="form-card" id="small-job-enquiry">
+            <div className="form-card-head"><span className="form-number">02 / INDIVIDUAL JOBS</span><Wrench size={25} /><h3>Small Jobs & Maintenance</h3><p>For repairs, installations and regular property maintenance.</p></div>
+            <EnquiryForm type="small" />
+          </div>
+        </div>
+        <div className="contact-details">
+          <a href={`tel:+${PHONE}`}><Phone size={18} /><span><small>Call us</small>+356 7933 7286</span></a>
+          <a href={`mailto:${EMAIL}`}><Mail size={18} /><span><small>Email</small>{EMAIL}</span></a>
+          <div><MapPin size={18} /><span><small>Service area</small>Across Malta</span></div>
         </div>
       </div>
     </section>
   );
-};
+}
 
-const Contact = () => {
+function Footer() {
   return (
-    <section id="contact" className="py-24 bg-white scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-4">Get In Touch</h2>
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-brand-slate mb-6">Ready to fix your home? Message us today!</h3>
-            <p className="text-base sm:text-lg text-gray-600">We provide professional handyman services all over Malta. Reach out for a free consultation.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="bg-slate-50 p-8 rounded-3xl text-center border border-slate-100">
-              <div className="bg-yellow-100 p-4 rounded-2xl text-brand-yellow w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                <Phone size={28} />
-              </div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Call or WhatsApp</p>
-              <p className="text-xl font-bold text-brand-slate">+356 79337286</p>
-            </div>
-            
-            <div className="bg-slate-50 p-8 rounded-3xl text-center border border-slate-100">
-              <div className="bg-yellow-100 p-4 rounded-2xl text-brand-yellow w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                <Mail size={28} />
-              </div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Email Us</p>
-              <p className="text-xl font-bold text-brand-slate">email@henryhandyman-mt.com</p>
-            </div>
-
-            <div className="bg-slate-50 p-8 rounded-3xl text-center border border-slate-100">
-              <div className="bg-yellow-100 p-4 rounded-2xl text-brand-yellow w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                <MapPin size={28} />
-              </div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Service Area</p>
-              <p className="text-xl font-bold text-brand-slate">All over Malta</p>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <a 
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-3 bg-brand-yellow text-brand-slate px-6 py-4 sm:px-12 sm:py-6 rounded-2xl font-bold text-xl sm:text-2xl hover:bg-yellow-500 transition-all shadow-xl shadow-yellow-600/20 w-full sm:w-auto"
-            >
-              <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8" />
-              Message on WhatsApp
-            </a>
-          </div>
-        </div>
+    <footer className="footer">
+      <div className="container footer-main">
+        <div><a className="brand footer-brand" href="#top"><span className="brand-mark">H<span>H</span></span><span className="brand-name">HENRY <b>HANDYMAN</b><small>PROPERTY CARE & RENOVATIONS</small></span></a><p>Property care, maintenance and full apartment renovations across Malta.</p></div>
+        <div className="footer-nav"><b>Explore</b><a href="#renovations">Full Renovations</a><a href="#services">Services</a><a href="#process">How it works</a><a href="#contact">Contact</a></div>
+        <div className="footer-nav"><b>Connect</b>{socialLinks.map(({label,href}) => <a href={href} target="_blank" rel="noreferrer" key={label}>{label} <ExternalLink size={12} /></a>)}</div>
       </div>
-    </section>
-  );
-};
-
-const Footer = () => {
-  return (
-    <footer className="bg-slate-900 text-white py-12 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="Henry Handyman Logo" className="h-10 w-auto" referrerPolicy="no-referrer" />
-            <span className="text-xl font-bold tracking-tight">
-              HENRY <span className="text-brand-yellow">HANDYMAN</span>
-            </span>
-          </div>
-          
-          <div className="flex gap-8 text-gray-400 text-sm font-medium">
-            <a href="#services" className="hover:text-white transition-colors">Services</a>
-            <a href="#renovations" className="hover:text-white transition-colors">Renovations</a>
-            <a href="#reviews" className="hover:text-white transition-colors">Reviews</a>
-            <a href="#contact" className="hover:text-white transition-colors">Contact</a>
-          </div>
-
-          <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} Henry Handyman Malta. All rights reserved.
-          </p>
-        </div>
-      </div>
+      <div className="container footer-bottom"><span>© {new Date().getFullYear()} Henry Handyman Malta. All rights reserved.</span><a href={`mailto:${EMAIL}`}>Contact Henry Handyman</a></div>
     </footer>
   );
-};
-
-const FloatingWhatsApp = () => {
-  return (
-    <motion.a 
-      href={WHATSAPP_LINK}
-      target="_blank"
-      rel="noopener noreferrer"
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      whileHover={{ scale: 1.1 }}
-      className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl flex items-center justify-center group"
-    >
-      <MessageCircle size={32} />
-      <span className="absolute right-full mr-4 bg-white text-slate-800 px-4 py-2 rounded-xl text-sm font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-        Chat with Henry
-      </span>
-    </motion.a>
-  );
-};
+}
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white font-sans text-brand-slate selection:bg-brand-yellow/30">
-      <Navbar />
+    <div className="site-shell">
+      <Header />
       <main>
         <Hero />
-        <FeaturedService />
-        <ServicesGrid />
-        <Testimonials />
+        <RenovationFeature />
+        <Services />
+        <Process />
+        <Profiles />
         <Contact />
       </main>
       <Footer />
-      <FloatingWhatsApp />
+      <a className="floating-whatsapp" href={waLink("Hello Henry, I have an enquiry.")} target="_blank" rel="noreferrer" aria-label="Chat with Henry on WhatsApp"><MessageCircle size={25} /><span>Chat with Henry</span></a>
     </div>
   );
 }
